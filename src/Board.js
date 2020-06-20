@@ -5,8 +5,9 @@ import Swimlane from './Swimlane';
 import './Board.css';
 
 export default class Board extends React.Component {
-  constructor(props) {
-    super(props);
+  
+    constructor() {
+    super();
     const clients = this.getClients();
     this.state = {
       clients: {
@@ -55,6 +56,42 @@ export default class Board extends React.Component {
       <Swimlane name={name} clients={clients} dragulaRef={ref}/>
     );
   }
+
+  componentDidMount() {
+    const backlog = this.swimlanes.backlog.current;
+    const progress = this.swimlanes.inProgress.current;
+    const complete = this.swimlanes.complete.current;
+    Dragula(
+      [backlog, progress, complete], 
+      {revertOnSpill: true}
+      )
+      .on('drag', function (el) {
+      }).on('drop', function (el, target, source, sibling) {
+        switch(target) {
+          case backlog:
+            let backlogArray = Array.from(backlog.children);
+            backlogArray.forEach((el) => {
+              el.className = 'Card Card-grey';
+            });
+            break;
+          case progress:
+            let progressArray = Array.from(progress.children);
+            progressArray.forEach((el) => {
+              el.className = 'Card Card-blue';
+            });
+            break;
+          case complete:
+            let completeArray = Array.from(complete.children);
+            completeArray.forEach((el) => {
+              el.className = 'Card Card-green';
+            });
+            break;
+          default:
+            console.log('default');
+        }
+      });
+  }
+      
 
   render() {
     return (
