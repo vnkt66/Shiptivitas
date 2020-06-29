@@ -1,0 +1,91 @@
+From 6f62729b4c72ddee4a7aa3a9c361b0e4b653d7c3 Mon Sep 17 00:00:00 2001
+From: venkanna penubothu <venkanna.penubothu@gmail.com>
+Date: Sat, 20 Jun 2020 23:00:59 +0530
+Subject: [PATCH] Create Patch File
+
+---
+ src/App.js   |  6 ++----
+ src/Board.js | 41 +++++++++++++++++++++++++++++++++++++++--
+ 2 files changed, 41 insertions(+), 6 deletions(-)
+
+diff --git a/src/App.js b/src/App.js
+index 18bcba9..7096591 100755
+--- a/src/App.js
++++ b/src/App.js
+@@ -6,12 +6,10 @@ import Board from './Board';
+ import './App.css';
+ 
+ class App extends Component {
+-  constructor(props) {
+-    super(props);
+-    this.state = {
++  state = {
+       selectedTab: 'home',
+     };
+-  }
++    
+   renderShippingRequests() {
+     return (<Board />);
+   }
+diff --git a/src/Board.js b/src/Board.js
+index 1f00045..57162d0 100644
+--- a/src/Board.js
++++ b/src/Board.js
+@@ -5,8 +5,9 @@ import Swimlane from './Swimlane';
+ import './Board.css';
+ 
+ export default class Board extends React.Component {
+-  constructor(props) {
+-    super(props);
++  
++    constructor() {
++    super();
+     const clients = this.getClients();
+     this.state = {
+       clients: {
+@@ -56,6 +57,42 @@ export default class Board extends React.Component {
+     );
+   }
+ 
++  componentDidMount() {
++    const backlog = this.swimlanes.backlog.current;
++    const progress = this.swimlanes.inProgress.current;
++    const complete = this.swimlanes.complete.current;
++    Dragula(
++      [backlog, progress, complete], 
++      {revertOnSpill: true}
++      )
++      .on('drag', function (el) {
++      }).on('drop', function (el, target, source, sibling) {
++        switch(target) {
++          case backlog:
++            let backlogArray = Array.from(backlog.children);
++            backlogArray.forEach((el) => {
++              el.className = 'Card Card-grey';
++            });
++            break;
++          case progress:
++            let progressArray = Array.from(progress.children);
++            progressArray.forEach((el) => {
++              el.className = 'Card Card-blue';
++            });
++            break;
++          case complete:
++            let completeArray = Array.from(complete.children);
++            completeArray.forEach((el) => {
++              el.className = 'Card Card-green';
++            });
++            break;
++          default:
++            console.log('default');
++        }
++      });
++  }
++      
++
+   render() {
+     return (
+       <div className="Board">
+-- 
+2.21.0.windows.1
+
